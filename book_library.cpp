@@ -89,6 +89,6 @@ int main() {
     } while (choice != 0);
 
     saveToFile(library); // Сохраняем данные перед выходом
-    return 0;
+    return 0;  //hello
 }
 
