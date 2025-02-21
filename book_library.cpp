@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -11,11 +12,13 @@ struct Book {
     bool isAvailable;
 };
 
+vector<Book> library;
+
 void showMenu() {
     cout << "\n=== Book library ===\n"
          << "1. Add a book\n"
          << "2. Show all books\n"
-         << "3. Search by name\n"
+         << "3. Search book\n"
          << "4. Save to file\n"
          << "5. Load from file\n"
          << "0. Exit\n"
@@ -69,18 +72,66 @@ void loadFromFile(vector<Book>& library, const string& filename = "library.txt")
     }
 }
 
+string toLower(string str) {
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+void searchByName(const vector<Book>& library){
+    string query;
+    cout << "Type name: "; cin >> query; query = toLower(query);
+    bool found = false;
+    
+    for (const auto& book : library) {
+        string lowerTitle = toLower(book.title);    
+        int count = 0;
+        if (lowerTitle.find(query) != string::npos)
+        {
+            cout << "Found: \n" << count + 1 << ". " << book.title
+            << " (By " << book.author << ", " << book.year << ")"
+            << " [Status: " << (book.isAvailable ? "Avaliable" : "Taken") << "]\n";
+            found = true; 
+        }
+    }
+    printf("\n");
+    if (!found) cout << "Books not found.\n";
+}
+
+void searchByAuthor(vector<Book>& library){} //допишу позже
+
+void searchByYear(vector<Book>& library){} // допишу позже х2 :)
+
+void searchBookMenu(){
+    int choise;
+    do {
+        cout << "1. Search by name\n"
+             << "2. Search by author\n"
+             << "3. Search by year\n"
+             << "0. Return to menu\n"
+             << "Choose action: \n";
+        cin >> choise; cin.ignore();
+        switch (choise){
+            case 1: searchByName(library); break;
+            case 2: searchByAuthor(library); break;
+            case 3: searchByYear(library); break;
+            case 0: "Returning...\n";break;
+            default: cout << "Wrong action!\n";
+        }
+        } while (choise != 0);
+}
+
 int main() {
-    vector<Book> library;
+    
     int choice;
     loadFromFile(library); // Загружаем данные при старте
 
     do {
-        showMenu(); cin >> choice; cin.ignore(); // Очищаем буфер после ввода числа
+        showMenu(); cin >> choice; cout << "\n" ; cin.ignore(); // Очищаем буфер после ввода числа
 
         switch (choice) {
             case 1: addBook(library); break;
             case 2: displayBooks(library); break;
-            case 3: /* Поиск (допишу позже) */ break;
+            case 3: searchBookMenu(); break;
             case 4: saveToFile(library); break;
             case 5: loadFromFile(library); break;
             case 0: cout << "Exiting...\n"; break;
